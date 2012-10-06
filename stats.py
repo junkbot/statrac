@@ -8,6 +8,9 @@ import urllib, urllib2, cookielib
 import sys
 from texttable import Texttable
 
+# for reverse sorting purposes (ceebs writing cmp)
+BIG_NUMBER = 1000000
+
 def print_all_stats(stats):
     print "General Stats:"
     table = Texttable()
@@ -25,8 +28,8 @@ def print_undone(undone):
     print "Uncompleted problems you have access to that others have completed:"
     table = Texttable()
     table.add_row(["Problem", "Users Completed"])
-    undone_list = [[u, undone[u]] for u in undone.keys()]
-    for u in sorted(undone_list, key=lambda x:len(x[1])):
+    undone_list = [[u, sorted(undone[u])] for u in undone.keys()]
+    for u in sorted(undone_list, key=lambda x:(BIG_NUMBER-len(x[1]), x[1], x[0])):
         table.add_row([u[0], ' '.join(u[1])])
     print table.draw()
     print 
