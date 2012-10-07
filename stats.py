@@ -10,7 +10,7 @@ import urllib, urllib2, cookielib
 import sys
 import time
 from datetime import datetime, timedelta
-#from texttable import Texttable
+from texttable import Texttable
 
 # for reverse sorting purposes (ceebs writing cmp)
 BIG_NUMBER = 1000000
@@ -19,7 +19,7 @@ BIG_NUMBER = 1000000
 def graph(probs):
     count = sorted(get_daily_count(get_finish_dates(probs)).items())
     # need some way to plot this, possibly gnuplot
-    print '\n'.join(map(lambda x: x[0].isoformat() + str(x[1]), count))
+    print '\n'.join(map(lambda x: x[0].isoformat() + '\t' +  str(x[1]), count))
 
 # gets the number of problems solved each day
 def get_daily_count(dates):
@@ -40,7 +40,7 @@ def get_daily_count(dates):
 def get_finish_dates(probs):
     finish_strings = filter(lambda x: x.__contains__("Finished"), map(lambda x: x[1][1], probs.items()))
     date_strings = map(lambda x: ' '.join(filter(None, x.split(' '))[3:][:-2])[:-1], finish_strings)
-    return map(lambda x: datetime.fromtimestamp(time.mktime(time.strptime(x, '%d %b %Y'))), date_strings)
+    return map(lambda x: datetime.strptime(x, '%d %b %Y'), date_strings)
 
 def print_all_stats(stats):
     print "General Stats:"
@@ -171,10 +171,10 @@ def main():
         opener.open('http://orac.amt.edu.au/jaz/cgi-bin/train/index.pl', login_data)
         resp = opener.open('http://orac.amt.edu.au/jaz/cgi-bin/train/hub.pl?expand=all&setshowdone=1')
         html_data = resp.read()
-        #print html_data
+        print html_data
 
         probs, your_stats = get_probs_stats(html_data)
-        #print_all_stats([your_stats])
+        print_all_stats([your_stats])
         graph(probs)
 
 if __name__ == "__main__":
